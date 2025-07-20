@@ -2,16 +2,18 @@ package app6;
 
 /** @author Ahmed Khoumsi */
 
+import java.util.Set;
+
 /** Cette classe effectue l'analyse lexicale
  */
 public class AnalLex {
 
 // Attributs
-
   private String expression;
   private int expressionLength;
   private int currentPosition;
 
+  public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/');
 	
 /** Constructeur pour l'initialisation d'attribut(s)
  */
@@ -35,21 +37,19 @@ public class AnalLex {
       Cette methode est une implementation d'un AEF
  */  
   public Terminal prochainTerminal( ) {
-
     StringBuilder temp = new StringBuilder();
+
     for (int i = currentPosition; i < expressionLength; i++, currentPosition++) {
-      if (expression.charAt(i) == '+' || expression.charAt(i) == '-' || expression.charAt(i) == '*' || expression.charAt(i) == '/')
-      {
-        if(temp.isEmpty())
-        {
-          temp.append(expression.charAt(i));
+      char c = expression.charAt(i);
+
+      if (OPERATORS.contains(c)) {
+        if (temp.isEmpty()) {
+          temp.append(c);
           currentPosition++;
         }
         return new Terminal(temp.toString());
-      }
-      else
-      {
-        temp.append(expression.charAt(i));
+      } else {
+        temp.append(c);
       }
     }
 

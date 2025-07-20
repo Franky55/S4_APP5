@@ -7,27 +7,39 @@ package app6;
 public class NoeudAST extends ElemAST {
 
   // Attributs
+  private String expression;
+
+  public ElemAST elemASTLeft;
+  public ElemAST elemASTRight;
 
   /** Constructeur pour l'initialisation d'attributs
    */
-  public NoeudAST( ) { // avec arguments
-    //
+  public NoeudAST(String _expression) {
+    expression = _expression;
+	elemASTRight = null;
+	elemASTLeft = null;
   }
 
  
   /** Evaluation de noeud d'AST
    */
   public int EvalAST( ) {
-     //
-      return 0;
+
+	  return switch (expression) {
+		  case "+" -> elemASTLeft.EvalAST() + elemASTRight.EvalAST();
+		  case "-" -> elemASTLeft.EvalAST() - elemASTRight.EvalAST();
+		  case "*" -> elemASTLeft.EvalAST() * elemASTRight.EvalAST();
+		  case "/" -> elemASTLeft.EvalAST() / elemASTRight.EvalAST();
+		  default -> 0;
+	  };
+
   }
 
 
   /** Lecture de noeud d'AST
    */
   public String LectAST( ) {
-     //
-      return "";
+      return " " + elemASTLeft.LectAST() + " " + expression + " " + elemASTRight.LectAST() + " ";
   }
 
 }

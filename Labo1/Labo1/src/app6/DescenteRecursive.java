@@ -7,13 +7,17 @@ package app6;
 public class DescenteRecursive {
 
   // Attributs
+  private String inDocument;
+  ElemAST racine;
+
 
 /** Constructeur de DescenteRecursive :
       - recoit en argument le nom du fichier contenant l'expression a analyser
       - pour l'initalisation d'attribut(s)
  */
 public DescenteRecursive(String in) {
-    //
+  inDocument = in;
+  racine = null;
 }
 
 
@@ -21,8 +25,36 @@ public DescenteRecursive(String in) {
  *    Elle retourne une reference sur la racine de l'AST construit
  */
 public ElemAST AnalSynt( ) {
-   //
-    return null;
+  Reader r = new Reader(inDocument);
+  AnalLex lexical = new AnalLex(r.toString());
+  Terminal t = null;
+
+  while(lexical.resteTerminal()){
+    t = lexical.prochainTerminal();
+    System.out.println(t.chaine + "\n");
+
+    ElemAST elemAST;
+    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0))) {
+      elemAST = new NoeudAST(t.chaine);
+    }
+    else {
+      elemAST = new FeuilleAST(t.chaine);
+    }
+
+    if(racine == null)
+    {
+      racine = elemAST;
+    }
+    else if(elemAST instanceof NoeudAST noeud) {
+      noeud.elemASTLeft = racine;
+      racine = noeud;
+    }
+    else {
+	    ((NoeudAST) racine).elemASTRight = elemAST;
+    }
+  }
+
+  return racine;
 }
 
 
@@ -36,7 +68,7 @@ public ElemAST AnalSynt( ) {
  */
 public void ErreurSynt(String s)
 {
-    //
+    // trust
 }
 
 
@@ -52,7 +84,9 @@ public void ErreurSynt(String s)
       args[0] = "ExpArith.txt";
       args[1] = "ResultatSyntaxique.txt";
     }
+
     DescenteRecursive dr = new DescenteRecursive(args[0]);
+
     try {
       ElemAST RacineAST = dr.AnalSynt();
       toWriteLect += "Lecture de l'AST trouve : " + RacineAST.LectAST() + "\n";

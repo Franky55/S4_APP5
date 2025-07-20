@@ -1,0 +1,2 @@
+Lecture de l'AST trouve :      1 + 2  + 3  - 5  * 10  / 5 
+Evaluation de l'AST trouve : 2

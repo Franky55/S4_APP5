@@ -7,28 +7,28 @@ package app6;
 public class FeuilleAST extends ElemAST {
 
   // Attribut(s)
+  private String expression;
 
 
 /**Constructeur pour l'initialisation d'attribut(s)
  */
-  public FeuilleAST( ) {  // avec arguments
-    //
+  public FeuilleAST(String _expression) {  // avec arguments
+    expression = _expression;
   }
 
 
   /** Evaluation de feuille d'AST
+   * May throw error
    */
   public int EvalAST( ) {
-    //
-      return 0;
+      return Integer.parseInt(expression);
   }
 
 
  /** Lecture de chaine de caracteres correspondant a la feuille d'AST
   */
   public String LectAST( ) {
-    //
-      return "";
+      return expression;
   }
 
 }
