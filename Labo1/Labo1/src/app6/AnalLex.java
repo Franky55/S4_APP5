@@ -14,7 +14,9 @@ public class AnalLex {
   private int currentPosition;
 
   public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/');
-	
+  public static final Set<Character> OPERATORS_P_M = Set.of('+', '-');
+  public static final Set<Character> OPERATORS_M_D = Set.of('*', '/');
+
 /** Constructeur pour l'initialisation d'attribut(s)
  */
   public AnalLex(String string) {  // arguments possibles

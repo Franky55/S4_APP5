@@ -1,0 +1,2 @@
+Lecture de l'AST trouve :    1 + 2  + 3  + 8 
+Evaluation de l'AST trouve : 14

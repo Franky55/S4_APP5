@@ -2,6 +2,8 @@ package app6;
 
 /** @author Ahmed Khoumsi */
 
+import java.util.Objects;
+
 /** Cette classe effectue l'analyse syntaxique
  */
 public class DescenteRecursive {
@@ -9,6 +11,7 @@ public class DescenteRecursive {
   // Attributs
   private String inDocument;
   ElemAST racine;
+  AnalLex lexical;
 
 
 /** Constructeur de DescenteRecursive :
@@ -26,42 +29,72 @@ public DescenteRecursive(String in) {
  */
 public ElemAST AnalSynt( ) {
   Reader r = new Reader(inDocument);
-  AnalLex lexical = new AnalLex(r.toString());
+  lexical = new AnalLex(r.toString());
   Terminal t = null;
 
+  ElemAST nextStartPoint;
   while(lexical.resteTerminal()){
-    t = lexical.prochainTerminal();
-    System.out.println(t.chaine + "\n");
-
-    ElemAST elemAST;
-    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0))) {
-      elemAST = new NoeudAST(t.chaine);
-    }
-    else {
-      elemAST = new FeuilleAST(t.chaine);
-    }
-
-    if(racine == null)
-    {
-      racine = elemAST;
-    }
-    else if(elemAST instanceof NoeudAST noeud) {
-      noeud.elemASTLeft = racine;
-      racine = noeud;
-    }
-    else {
-	    ((NoeudAST) racine).elemASTRight = elemAST;
-    }
+    racine = makingTree(racine);
   }
 
   return racine;
 }
 
+  private Terminal readNext(AnalLex lexical){
+    Terminal t = lexical.prochainTerminal();
+    System.out.println(t.chaine + "\n");
+
+    return t;
+  }
+
+  private ElemAST makingTree(ElemAST elemAST) {
+    Terminal currentTerminal = readNext(lexical);
+    Terminal aheadTerminal = null;
+    ElemAST previousElemAST = elemAST;
+
+    if(!AnalLex.OPERATORS.contains(currentTerminal.chaine.charAt(0))) {
+
+      if(lexical.resteTerminal()){
+         aheadTerminal = readNext(lexical);
+      }
+
+      if(lexical.resteTerminal() && AnalLex.OPERATORS_P_M.contains(Objects.requireNonNull(aheadTerminal).chaine.charAt(0))){       // operator +-
+        if (previousElemAST != null) {
+          elemAST = new NoeudAST(aheadTerminal.chaine);                           // Placing the first element
+          ((NoeudAST) elemAST).elemASTLeft = previousElemAST;
+          ((NoeudAST) previousElemAST).elemASTRight = makeNewElemAST(currentTerminal);;
+        }
+        else {
+          elemAST = new NoeudAST(aheadTerminal.chaine);                           // Placing the first element
+          ((NoeudAST) elemAST).elemASTLeft = makeNewElemAST(currentTerminal);     // Placing the 2nd element
+        }
+        return elemAST;
+      }
+      else if(lexical.resteTerminal() && AnalLex.OPERATORS_M_D.contains(Objects.requireNonNull(aheadTerminal).chaine.charAt(0))) { // operator */
+        elemAST = new NoeudAST(aheadTerminal.chaine);                           // Placing the first element
+        ((NoeudAST) elemAST).elemASTLeft = makeNewElemAST(currentTerminal);    // Placing the 2nd element
+        ((NoeudAST) elemAST).elemASTRight = makingTree(elemAST);                   // placing the  element bottom right
+        ((NoeudAST) previousElemAST).elemASTRight = elemAST;
+        //Call function again to put right leaf
+        return previousElemAST;
+      }
+      else {
+        elemAST = makeNewElemAST(currentTerminal);
+        ((NoeudAST) previousElemAST).elemASTRight = elemAST;
+        return previousElemAST;
+      }
+    }
+
+    return previousElemAST;
+  }
+
+  private ElemAST makeNewElemAST(Terminal t){
+    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0)))
+      return new NoeudAST(t.chaine);
+    return new FeuilleAST(t.chaine);
+  }
 
 // Methode pour chaque symbole non-terminal de la grammaire retenue
-// ... 
-// ...
-
 
 
 /** ErreurSynt() envoie un message d'erreur syntaxique
