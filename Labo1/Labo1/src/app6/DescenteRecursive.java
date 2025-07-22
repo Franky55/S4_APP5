@@ -9,6 +9,7 @@ public class DescenteRecursive {
   // Attributs
   private String inDocument;
   ElemAST racine;
+  AnalLex lexical;
 
 
 /** Constructeur de DescenteRecursive :
@@ -26,43 +27,97 @@ public DescenteRecursive(String in) {
  */
 public ElemAST AnalSynt( ) {
   Reader r = new Reader(inDocument);
-  AnalLex lexical = new AnalLex(r.toString());
-  Terminal t = null;
+  lexical = new AnalLex(r.toString());
+  Terminal t = readNext(lexical);
 
   while(lexical.resteTerminal()){
-    t = lexical.prochainTerminal();
-    System.out.println(t.chaine + "\n");
-
-    ElemAST elemAST;
-    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0))) {
-      elemAST = new NoeudAST(t.chaine);
-    }
-    else {
-      elemAST = new FeuilleAST(t.chaine);
-    }
-
-    if(racine == null)
-    {
-      racine = elemAST;
-    }
-    else if(elemAST instanceof NoeudAST noeud) {
-      noeud.elemASTLeft = racine;
-      racine = noeud;
-    }
-    else {
-	    ((NoeudAST) racine).elemASTRight = elemAST;
-    }
+    t = partieE(t);
   }
+  partieE(t);
 
   return racine;
 }
 
 
 // Methode pour chaque symbole non-terminal de la grammaire retenue
-// ... 
-// ...
+  private Terminal partieE(Terminal current)
+  {
+    Terminal nextOne = readNext(lexical);
+
+    if(nextOne.chaine.isEmpty() || AnalLex.OPERATORS_P_M.contains(nextOne.chaine.charAt(0)))
+    {
+      ElemAST elemAST = makeNewElemAST(current);
+      if(racine == null)
+      {
+        racine = elemAST;
+      }
+      else {
+        ((NoeudAST) racine).elemASTLeft = elemAST;
+      }
+    }
+    else if(nextOne.chaine.isEmpty() || AnalLex.OPERATORS_M_D.contains(nextOne.chaine.charAt(0)))
+    {
+      ElemAST elemAST = makeNewElemAST(nextOne);
+
+      if(racine == null)
+      {
+        racine = elemAST;
+        ((NoeudAST) racine).elemASTRight = makeNewElemAST(current);
+      }
+
+      ((NoeudAST) racine).elemASTLeft = partieT(null, current, nextOne);
+    }
+    else if(!current.chaine.isEmpty() && AnalLex.OPERATORS_P_M.contains(current.chaine.charAt(0)))
+    {
+      ElemAST elemAST = makeNewElemAST(current);
+      if(elemAST instanceof NoeudAST noeud) {
+        noeud.elemASTRight = racine;
+        racine = noeud;
+      }
+    }
+
+    return nextOne;
+  }
+
+  private ElemAST partieT(ElemAST leftOperand, Terminal current, Terminal operator) {
+    NoeudAST opNode = (NoeudAST) makeNewElemAST(operator);
+    ElemAST rightOperand = makeNewElemAST(current);
+    opNode.elemASTRight = rightOperand;
+
+    // Read the next token (could be a number or another operator)
+    Terminal nextToken = readNext(lexical);
+
+    if (!nextToken.chaine.isEmpty() && AnalLex.OPERATORS_M_D.contains(nextToken.chaine.charAt(0))) {
+      // Recursively process deeper
+      Terminal nextOperand = readNext(lexical);
+      ElemAST leftBranch = partieT(leftOperand, nextOperand, nextToken);
+      opNode.elemASTLeft = leftBranch;
+    } else if (!nextToken.chaine.isEmpty()) {
+      // It must be a number
+      opNode.elemASTLeft = makeNewElemAST(nextToken);
+    }
+
+    return opNode;
+  }
+
+  private void partieF()
+  {
+
+  }
 
 
+  private ElemAST makeNewElemAST(Terminal t){
+    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0)))
+      return new NoeudAST(t.chaine);
+    return new FeuilleAST(t.chaine);
+  }
+
+  private Terminal readNext(AnalLex lexical){
+    Terminal t = lexical.prochainTerminal();
+    System.out.println(t.chaine + "\n");
+
+    return t;
+  }
 
 /** ErreurSynt() envoie un message d'erreur syntaxique
  */

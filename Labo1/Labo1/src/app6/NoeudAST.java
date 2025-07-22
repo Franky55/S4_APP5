@@ -39,7 +39,9 @@ public class NoeudAST extends ElemAST {
   /** Lecture de noeud d'AST
    */
   public String LectAST( ) {
-      return " " + elemASTLeft.LectAST() + " " + expression + " " + elemASTRight.LectAST() + " ";
+	  String left = (elemASTLeft != null) ? elemASTLeft.LectAST() : "null";
+	  String right = (elemASTRight != null) ? elemASTRight.LectAST() : "null";
+	  return "(" + left + " " + expression + " " + right + ")";
   }
 
 }

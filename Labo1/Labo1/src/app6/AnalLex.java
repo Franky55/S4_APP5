@@ -14,13 +14,15 @@ public class AnalLex {
   private int currentPosition;
 
   public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/');
-	
+  public static final Set<Character> OPERATORS_P_M = Set.of('+', '-');
+  public static final Set<Character> OPERATORS_M_D = Set.of('*', '/');
+
 /** Constructeur pour l'initialisation d'attribut(s)
  */
   public AnalLex(String string) {  // arguments possibles
     expression = string;
     expressionLength = string.length();
-    currentPosition = 0;
+    currentPosition = expressionLength-1;
   }
 
 
@@ -29,7 +31,7 @@ public class AnalLex {
       true s'il reste encore au moins un terminal qui n'a pas ete retourne 
  */
   public boolean resteTerminal( ) {
-      return expressionLength > currentPosition;
+      return currentPosition >= 0;
   }
   
   
@@ -39,17 +41,17 @@ public class AnalLex {
   public Terminal prochainTerminal( ) {
     StringBuilder temp = new StringBuilder();
 
-    for (int i = currentPosition; i < expressionLength; i++, currentPosition++) {
+    for (int i = currentPosition; i >= 0; i--, currentPosition--) {
       char c = expression.charAt(i);
 
       if (OPERATORS.contains(c)) {
         if (temp.isEmpty()) {
-          temp.append(c);
-          currentPosition++;
+          temp.insert(0, c);
+          currentPosition--;
         }
         return new Terminal(temp.toString());
       } else {
-        temp.append(c);
+        temp.insert(0, c);
       }
     }
 
