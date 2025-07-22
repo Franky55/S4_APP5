@@ -61,13 +61,13 @@ private Terminal partieE() {
 
 
   private ElemAST partieT(Terminal first) {
-    ElemAST right = makeNewElemAST(first);
+    ElemAST right = partieF(first);
 
     Terminal op = readNext(lexical); // read possible * or /
 
     while (op != null && (op.chaine.equals("*") || op.chaine.equals("/"))) {
       Terminal next = readNext(lexical); // next operand
-      ElemAST left = makeNewElemAST(next);
+      ElemAST left = partieF(next);
 
       NoeudAST node = new NoeudAST(op.chaine);
       node.elemASTLeft = left;
@@ -85,11 +85,10 @@ private Terminal partieE() {
 
 
   private ElemAST partieF(Terminal current) {
-    if (current.chaine.equals("(")) {
-      Terminal next = readNext(lexical); // consume '('
+    if (current.chaine.equals(")")) {
       partieE(); // parse inside the parentheses
       Terminal closing = readNext(lexical); // consume ')'
-      if (!closing.chaine.equals(")")) {
+      if (!closing.chaine.equals("(")) {
         ErreurSynt("Expected closing parenthesis.");
       }
       return racine;
@@ -98,14 +97,6 @@ private Terminal partieE() {
     }
 
     return null;
-  }
-
-
-
-  private ElemAST makeNewElemAST(Terminal t){
-    if(AnalLex.OPERATORS.contains(t.chaine.charAt(0)))
-      return new NoeudAST(t.chaine);
-    return new FeuilleAST(t.chaine);
   }
 
   private Terminal readNext(AnalLex lexical){

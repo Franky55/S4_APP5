@@ -20,9 +20,20 @@ public class AnalLex {
 /** Constructeur pour l'initialisation d'attribut(s)
  */
   public AnalLex(String string) {
-    expression = string;
+    expression = removeSpaces(string);
     expressionLength = string.length();
     currentPosition = expressionLength-1;
+  }
+
+  public String removeSpaces(String s) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (!Character.isWhitespace(c)) {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 
 
@@ -61,6 +72,7 @@ public class AnalLex {
       }
     }
 
+    ErreurLex(temp.toString());
     return new Terminal(temp.toString());
   }
 
@@ -69,9 +81,32 @@ public class AnalLex {
   }
 
   /** ErreurLex() envoie un message d'erreur lexicale
- */ 
-  public void ErreurLex(String s) {	
-     System.out.println("Erreur lors de ca: " + s);
+ */
+  public void ErreurLex(String s) {
+    if (s == null || s.isEmpty())
+      return;
+
+    Character c1 =  s.charAt(0);
+    Character c2 = null;
+    boolean error = false;
+
+    if (Character.isLetter(c1)) {
+      if (Character.isLowerCase(c1)) error = true;
+    }
+
+    for (int i = 0; i < s.length(); i++) {
+      c1 = expression.charAt(i);
+      if (c2 != null) {
+        if (c1 == '_' && c2 == '_') error = true;
+      }
+      c2 =  c1;
+    }
+    if (s.charAt(s.length() - 1) == '_') error = true;
+    if (error) {
+      System.out.println("Erreur : " + s);
+      System.exit(1);
+    }
+
   }
 
   

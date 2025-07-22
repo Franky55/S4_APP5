@@ -1,2 +1,2 @@
-Lecture de l'AST trouve : ((3 * 1) + 2)
-Evaluation de l'AST trouve : 5
+Lecture de l'AST trouve : ((9 * 3) + (25 - 56))
+Evaluation de l'AST trouve : -4
