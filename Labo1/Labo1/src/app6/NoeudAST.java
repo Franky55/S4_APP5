@@ -44,6 +44,11 @@ public class NoeudAST extends ElemAST {
 	  return "(" + left + " " + expression + " " + right + ")";
   }
 
+	public String LectAST(String prefix) {
+		return prefix + expression + "\n" + elemASTLeft.LectAST(prefix + "\t") + elemASTRight.LectAST(prefix + "\t");
+		//return " " + left.LectAST() + " " + terminal.chaine + " " + right.LectAST() + " ";
+	}
+
 }
 
 

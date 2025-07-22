@@ -31,4 +31,7 @@ public class FeuilleAST extends ElemAST {
       return expression;
   }
 
+    public String LectAST(String prefix) {
+        return prefix + expression + "\n";
+    }
 }

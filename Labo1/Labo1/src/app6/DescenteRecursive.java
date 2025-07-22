@@ -2,6 +2,8 @@ package app6;
 
 /** @author Ahmed Khoumsi */
 
+import static app6.AnalLex.OPERATORS_NO_P;
+
 /** Cette classe effectue l'analyse syntaxique
  */
 public class DescenteRecursive {
@@ -39,6 +41,7 @@ private Terminal partieE() {
   ElemAST right = partieT(currentTerminal);
 
   Terminal op = readNext(lexical); // try to read + or -
+  ErreurSynt(currentTerminal, op);
 
   while (op != null && (op.chaine.equals("+") || op.chaine.equals("-"))) {
     Terminal t2 = readNext(lexical); // next value
@@ -64,6 +67,7 @@ private Terminal partieE() {
     ElemAST right = partieF(first);
 
     Terminal op = readNext(lexical); // read possible * or /
+    ErreurSynt(first, op);
 
     while (op != null && (op.chaine.equals("*") || op.chaine.equals("/"))) {
       Terminal next = readNext(lexical); // next operand
@@ -108,10 +112,25 @@ private Terminal partieE() {
 
 /** ErreurSynt() envoie un message d'erreur syntaxique
  */
-public void ErreurSynt(String s)
-{
-    // trust
-}
+  public void ErreurSynt(String s)
+  {
+      System.out.println("Erreur : " + s);
+      System.exit(1);
+  }
+
+  public void ErreurSynt(Terminal current, Terminal nextOne)
+  {
+    if( current.chaine.isEmpty() || nextOne.chaine.isEmpty() )
+      return;
+
+    char c = current.chaine.charAt(0);
+    char c2 = nextOne.chaine.charAt(0);
+
+    if (OPERATORS_NO_P.contains(c) && OPERATORS_NO_P.contains(c2)) {
+      System.out.println("Erreur : " + current.chaine);
+      System.exit(1);
+    }
+  }
 
 
 
@@ -131,6 +150,8 @@ public void ErreurSynt(String s)
 
     try {
       ElemAST RacineAST = dr.AnalSynt();
+      toWriteLect += "Lecture de l'AST trouve affichage : " + RacineAST.LectAST("") + "\n";
+
       toWriteLect += "Lecture de l'AST trouve : " + RacineAST.LectAST() + "\n";
       System.out.println(toWriteLect);
       toWriteEval += "Evaluation de l'AST trouve : " + RacineAST.EvalAST() + "\n";

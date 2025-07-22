@@ -14,6 +14,7 @@ public class AnalLex {
   private int currentPosition;
 
   public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/', '(', ')');
+  public static final Set<Character> OPERATORS_NO_P = Set.of('+', '-', '*', '/');
   private Terminal lastTerminal = null;
 
 
