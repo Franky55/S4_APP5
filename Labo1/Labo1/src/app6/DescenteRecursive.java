@@ -25,85 +25,81 @@ public DescenteRecursive(String in) {
 /** AnalSynt() effectue l'analyse syntaxique et construit l'AST.
  *    Elle retourne une reference sur la racine de l'AST construit
  */
-public ElemAST AnalSynt( ) {
-  Reader r = new Reader(inDocument);
-  lexical = new AnalLex(r.toString());
-  Terminal t = readNext(lexical);
-
-  while(lexical.resteTerminal()){
-    t = partieE(t);
-  }
-  partieE(t);
-
+public ElemAST AnalSynt() {
+  lexical = new AnalLex(new Reader(inDocument).toString());
+  partieE();
   return racine;
 }
 
 
+
 // Methode pour chaque symbole non-terminal de la grammaire retenue
-  private Terminal partieE(Terminal current)
-  {
-    Terminal nextOne = readNext(lexical);
+private Terminal partieE() {
+  Terminal currentTerminal = readNext(lexical); // T
+  ElemAST right = partieT(currentTerminal);
 
-    if(nextOne.chaine.isEmpty() || AnalLex.OPERATORS_P_M.contains(nextOne.chaine.charAt(0)))
-    {
-      ElemAST elemAST = makeNewElemAST(current);
-      if(racine == null)
-      {
-        racine = elemAST;
-      }
-      else {
-        ((NoeudAST) racine).elemASTLeft = elemAST;
-      }
-    }
-    else if(nextOne.chaine.isEmpty() || AnalLex.OPERATORS_M_D.contains(nextOne.chaine.charAt(0)))
-    {
-      ElemAST elemAST = makeNewElemAST(nextOne);
+  Terminal op = readNext(lexical); // try to read + or -
 
-      if(racine == null)
-      {
-        racine = elemAST;
-        ((NoeudAST) racine).elemASTRight = makeNewElemAST(current);
-      }
+  while (op != null && (op.chaine.equals("+") || op.chaine.equals("-"))) {
+    Terminal t2 = readNext(lexical); // next value
+    ElemAST left = partieT(t2);
 
-      ((NoeudAST) racine).elemASTLeft = partieT(null, current, nextOne);
-    }
-    else if(!current.chaine.isEmpty() && AnalLex.OPERATORS_P_M.contains(current.chaine.charAt(0)))
-    {
-      ElemAST elemAST = makeNewElemAST(current);
-      if(elemAST instanceof NoeudAST noeud) {
-        noeud.elemASTRight = racine;
-        racine = noeud;
-      }
-    }
+    NoeudAST node = new NoeudAST(op.chaine);
+    node.elemASTLeft = left;
+    node.elemASTRight = right;
+    right = node;
 
-    return nextOne;
+    op = readNext(lexical);
   }
 
-  private ElemAST partieT(ElemAST leftOperand, Terminal current, Terminal operator) {
-    NoeudAST opNode = (NoeudAST) makeNewElemAST(operator);
-    ElemAST rightOperand = makeNewElemAST(current);
-    opNode.elemASTRight = rightOperand;
+  // op is not + or -, bring back pointer
+  lexical.pushBack(op);
 
-    // Read the next token (could be a number or another operator)
-    Terminal nextToken = readNext(lexical);
+  racine = right;
+  return op;
+}
 
-    if (!nextToken.chaine.isEmpty() && AnalLex.OPERATORS_M_D.contains(nextToken.chaine.charAt(0))) {
-      // Recursively process deeper
-      Terminal nextOperand = readNext(lexical);
-      ElemAST leftBranch = partieT(leftOperand, nextOperand, nextToken);
-      opNode.elemASTLeft = leftBranch;
-    } else if (!nextToken.chaine.isEmpty()) {
-      // It must be a number
-      opNode.elemASTLeft = makeNewElemAST(nextToken);
+
+  private ElemAST partieT(Terminal first) {
+    ElemAST right = makeNewElemAST(first);
+
+    Terminal op = readNext(lexical); // read possible * or /
+
+    while (op != null && (op.chaine.equals("*") || op.chaine.equals("/"))) {
+      Terminal next = readNext(lexical); // next operand
+      ElemAST left = makeNewElemAST(next);
+
+      NoeudAST node = new NoeudAST(op.chaine);
+      node.elemASTLeft = left;
+      node.elemASTRight = right;
+      right = node;
+
+      op = readNext(lexical); // read another * or /
     }
 
-    return opNode;
+    // op is not * or /, go back to partieE
+    lexical.pushBack(op);
+
+    return right;
   }
 
-  private void partieF()
-  {
 
+  private ElemAST partieF(Terminal current) {
+    if (current.chaine.equals("(")) {
+      Terminal next = readNext(lexical); // consume '('
+      partieE(); // parse inside the parentheses
+      Terminal closing = readNext(lexical); // consume ')'
+      if (!closing.chaine.equals(")")) {
+        ErreurSynt("Expected closing parenthesis.");
+      }
+      return racine;
+    } else if (Character.isLetterOrDigit(current.chaine.charAt(0))) {
+      return new FeuilleAST(current.chaine); // id
+    }
+
+    return null;
   }
+
 
 
   private ElemAST makeNewElemAST(Terminal t){

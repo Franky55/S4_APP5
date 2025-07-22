@@ -13,13 +13,13 @@ public class AnalLex {
   private int expressionLength;
   private int currentPosition;
 
-  public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/');
-  public static final Set<Character> OPERATORS_P_M = Set.of('+', '-');
-  public static final Set<Character> OPERATORS_M_D = Set.of('*', '/');
+  public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/', '(', ')');
+  private Terminal lastTerminal = null;
+
 
 /** Constructeur pour l'initialisation d'attribut(s)
  */
-  public AnalLex(String string) {  // arguments possibles
+  public AnalLex(String string) {
     expression = string;
     expressionLength = string.length();
     currentPosition = expressionLength-1;
@@ -39,6 +39,12 @@ public class AnalLex {
       Cette methode est une implementation d'un AEF
  */  
   public Terminal prochainTerminal( ) {
+    if (lastTerminal != null) {
+      Terminal temp = lastTerminal;
+      lastTerminal = null;
+      return temp;
+    }
+
     StringBuilder temp = new StringBuilder();
 
     for (int i = currentPosition; i >= 0; i--, currentPosition--) {
@@ -58,8 +64,11 @@ public class AnalLex {
     return new Terminal(temp.toString());
   }
 
- 
-/** ErreurLex() envoie un message d'erreur lexicale
+  public void pushBack(Terminal t) {
+    this.lastTerminal = t;
+  }
+
+  /** ErreurLex() envoie un message d'erreur lexicale
  */ 
   public void ErreurLex(String s) {	
      System.out.println("Erreur lors de ca: " + s);
