@@ -1,2 +1,14 @@
-Lecture de l'AST trouve :  1 * 3 
-Evaluation de l'AST trouve : 3
+Lecture de l'AST trouve : 
++
+	20
+	+
+		2
+		-
+			3
+			*
+				5
+				/
+					10
+					5
+
+Evaluation de l'AST trouve : 15

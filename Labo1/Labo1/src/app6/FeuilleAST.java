@@ -26,8 +26,8 @@ public class FeuilleAST extends ElemAST {
 
  /** Lecture de chaine de caracteres correspondant a la feuille d'AST
   */
-  public String LectAST( ) {
-      return terminal.chaine;
+  public String LectAST(String prefix) {
+      return prefix + terminal.chaine + "\n";
   }
 
 }

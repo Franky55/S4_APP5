@@ -19,7 +19,7 @@ public abstract class ElemAST {
 
   /** Lecture d'AST
    */
-  public abstract String LectAST();
+  public abstract String LectAST(String prefix);
 
 
 /** ErreurEvalAST() envoie un message d'erreur lors de la construction d'AST

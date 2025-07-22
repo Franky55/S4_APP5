@@ -2,6 +2,7 @@ package app6;
 
 /** @author Ahmed Khoumsi */
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /** Cette classe effectue l'analyse syntaxique
@@ -99,14 +100,51 @@ public ElemAST AnalSynt( ) {
     System.out.println(t1.chaine);
   }
    */
+  /*
+  NoeudAST n1 = new NoeudAST(
+          new Terminal("*"),
+          new FeuilleAST(new Terminal("2")),
+          new FeuilleAST(new Terminal("3"))
+  );
+  racine = new NoeudAST(
+          new Terminal("+"),
+          n1,
+          new FeuilleAST(new Terminal("1"))
+  );
+   */
 
+  ArrayList<ElemAST> elements = new ArrayList<>();
+  while (lexical.resteTerminal()) {
+    elements.add(new FeuilleAST(lexical.prochainTerminal()));
+  }
+  while (elements.size() > 3) {
+    ElemAST elem1, elem2, elem3;
+    elem1 = elements.remove(0);
+    elem2 = elements.remove(0);
+    elem3 = elements.remove(0);
+    if (isOperator(elem2.terminal)) {
+      NoeudAST noeud = new NoeudAST(elem2.terminal, elem3, elem1);
+      elements.add(0, noeud);
+    }
+  }
 
+  racine = new NoeudAST(elements.get(1).terminal, elements.get(2), elements.get(0));
 
   return racine;
 }
 
 public ElemAST recursive() {
-  return null
+  Terminal t = lexical.prochainTerminal();
+  if (isMultiOperator(t)) {
+    NoeudAST noeudAST = new NoeudAST(
+            t,
+            recursive(),
+            recursive()
+    );
+    return noeudAST;
+  } else {
+    return new FeuilleAST(t);
+  }
 }
 
 public boolean isOperator(Terminal t) {
@@ -155,7 +193,7 @@ public void ErreurSynt(String s)
 
     try {
       ElemAST RacineAST = dr.AnalSynt();
-      toWriteLect += "Lecture de l'AST trouve : " + RacineAST.LectAST() + "\n";
+      toWriteLect += "Lecture de l'AST trouve : \n" + RacineAST.LectAST("") + "\n";
       System.out.println(toWriteLect);
       toWriteEval += "Evaluation de l'AST trouve : " + RacineAST.EvalAST() + "\n";
       System.out.println(toWriteEval);

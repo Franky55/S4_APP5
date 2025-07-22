@@ -30,10 +30,10 @@ public class NoeudAST extends ElemAST {
   public int EvalAST( ) {
 
 	  return switch (terminal.chaine) {
-		  case "+" -> right.EvalAST() + left.EvalAST();
-		  case "-" -> right.EvalAST() - left.EvalAST();
-		  case "*" -> right.EvalAST() * left.EvalAST();
-		  case "/" -> right.EvalAST() / left.EvalAST();
+		  case "+" -> left.EvalAST() + right.EvalAST();
+		  case "-" -> left.EvalAST() - right.EvalAST();
+		  case "*" -> left.EvalAST() * right.EvalAST();
+		  case "/" -> left.EvalAST() / right.EvalAST();
 		  default -> 0;
 	  };
 
@@ -42,8 +42,9 @@ public class NoeudAST extends ElemAST {
 
   /** Lecture de noeud d'AST
    */
-  public String LectAST( ) {
-      return " " + left.LectAST() + " " + terminal.chaine + " " + right.LectAST() + " ";
+  public String LectAST(String prefix) {
+      return prefix + terminal.chaine + "\n" + left.LectAST(prefix + "\t") + right.LectAST(prefix + "\t");
+      //return " " + left.LectAST() + " " + terminal.chaine + " " + right.LectAST() + " ";
   }
 
 }
