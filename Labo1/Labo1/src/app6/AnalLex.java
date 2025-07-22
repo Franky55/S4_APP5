@@ -9,18 +9,30 @@ import java.util.Set;
 public class AnalLex {
 
 // Attributs
-  private String expression;
-  private int expressionLength;
-  private int currentPosition;
+  public String expression;
+  public int expressionLength;
+  public int currentPosition;
 
   public static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/');
 	
 /** Constructeur pour l'initialisation d'attribut(s)
  */
   public AnalLex(String string) {  // arguments possibles
-    expression = string;
-    expressionLength = string.length();
-    currentPosition = 0;
+    expression = removeSpaces(string);
+    expressionLength = expression.length();
+    currentPosition = expressionLength - 1;
+
+  }
+
+  public String removeSpaces(String s) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (!Character.isWhitespace(c)) {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 
 
@@ -29,7 +41,7 @@ public class AnalLex {
       true s'il reste encore au moins un terminal qui n'a pas ete retourne 
  */
   public boolean resteTerminal( ) {
-      return expressionLength > currentPosition;
+      return  currentPosition >= 0;
   }
   
   
@@ -38,29 +50,48 @@ public class AnalLex {
  */  
   public Terminal prochainTerminal( ) {
     StringBuilder temp = new StringBuilder();
-
-    for (int i = currentPosition; i < expressionLength; i++, currentPosition++) {
+    for (int i = currentPosition; i >= 0; i--, currentPosition--) {
       char c = expression.charAt(i);
 
       if (OPERATORS.contains(c)) {
         if (temp.isEmpty()) {
-          temp.append(c);
-          currentPosition++;
+          temp.insert(0, c);
+          currentPosition--;
         }
-        return new Terminal(temp.toString());
+        break;
       } else {
-        temp.append(c);
+        temp.insert(0, c);
       }
     }
-
+    ErreurLex(temp.toString());
     return new Terminal(temp.toString());
   }
 
  
 /** ErreurLex() envoie un message d'erreur lexicale
  */ 
-  public void ErreurLex(String s) {	
-     System.out.println("Erreur lors de ca: " + s);
+  public void ErreurLex(String s) {
+    Character c1 =  s.charAt(0);
+    Character c2 = null;
+    boolean error = false;
+
+    if (Character.isLetter(c1)) {
+      if (Character.isLowerCase(c1)) error = true;
+    }
+
+    for (int i = 0; i < s.length(); i++) {
+      c1 = expression.charAt(i);
+      if (c2 != null) {
+        if (c1 == '_' && c2 == '_') error = true;
+      }
+      c2 =  c1;
+    }
+    if (s.charAt(s.length() - 1) == '_') error = true;
+    if (error) {
+      System.out.println("Erreur : " + s);
+      System.exit(1);
+    }
+
   }
 
   
@@ -70,8 +101,8 @@ public class AnalLex {
     System.out.println("Debut d'analyse lexicale");
     if (args.length == 0){
     args = new String [2];
-            args[0] = "ExpArith.txt";
-            args[1] = "ResultatLexical.txt";
+            args[0] = "Allo.txt";
+            args[1] = "Sortie.txt";
     }
     Reader r = new Reader(args[0]);
 

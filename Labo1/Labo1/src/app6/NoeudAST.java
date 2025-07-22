@@ -7,17 +7,21 @@ package app6;
 public class NoeudAST extends ElemAST {
 
   // Attributs
-  private String expression;
-
-  public ElemAST elemASTLeft;
-  public ElemAST elemASTRight;
+  public ElemAST left;
+  public ElemAST right;
 
   /** Constructeur pour l'initialisation d'attributs
    */
-  public NoeudAST(String _expression) {
-    expression = _expression;
-	elemASTRight = null;
-	elemASTLeft = null;
+  public NoeudAST(Terminal terminal) {
+    super(terminal);
+	right = null;
+	left = null;
+  }
+
+  public NoeudAST(Terminal terminal, ElemAST left, ElemAST right) {
+      super(terminal);
+      this.left = left;
+      this.right = right;
   }
 
  
@@ -25,11 +29,11 @@ public class NoeudAST extends ElemAST {
    */
   public int EvalAST( ) {
 
-	  return switch (expression) {
-		  case "+" -> elemASTLeft.EvalAST() + elemASTRight.EvalAST();
-		  case "-" -> elemASTLeft.EvalAST() - elemASTRight.EvalAST();
-		  case "*" -> elemASTLeft.EvalAST() * elemASTRight.EvalAST();
-		  case "/" -> elemASTLeft.EvalAST() / elemASTRight.EvalAST();
+	  return switch (terminal.chaine) {
+		  case "+" -> right.EvalAST() + left.EvalAST();
+		  case "-" -> right.EvalAST() - left.EvalAST();
+		  case "*" -> right.EvalAST() * left.EvalAST();
+		  case "/" -> right.EvalAST() / left.EvalAST();
 		  default -> 0;
 	  };
 
@@ -39,7 +43,7 @@ public class NoeudAST extends ElemAST {
   /** Lecture de noeud d'AST
    */
   public String LectAST( ) {
-      return " " + elemASTLeft.LectAST() + " " + expression + " " + elemASTRight.LectAST() + " ";
+      return " " + left.LectAST() + " " + terminal.chaine + " " + right.LectAST() + " ";
   }
 
 }

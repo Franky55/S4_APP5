@@ -6,7 +6,12 @@ package app6;
  */
 public abstract class ElemAST {
 
-  
+  public Terminal terminal;
+
+  public ElemAST(Terminal terminal) {
+    this.terminal = terminal;
+  }
+
   /** Evaluation d'AST
    */
   public abstract int EvalAST();
