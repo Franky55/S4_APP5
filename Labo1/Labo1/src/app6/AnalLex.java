@@ -67,6 +67,7 @@ public class AnalLex {
           temp.insert(0, c);
           currentPosition--;
         }
+        ErreurLex(temp.toString());
         return new Terminal(temp.toString());
       } else {
         temp.insert(0, c);
@@ -91,20 +92,23 @@ public class AnalLex {
     Character c2 = null;
     boolean error = false;
 
-    if (Character.isLetter(c1)) {
-      if (Character.isLowerCase(c1)) error = true;
+    if (Character.isLetter(c1) && Character.isLowerCase(c1)) {
+      System.out.println("Erreur le premier charactere ne peut pas etre miniscule: \n" + s);
+      System.exit(1);
     }
 
     for (int i = 0; i < s.length(); i++) {
       c1 = expression.charAt(i);
       if (c2 != null) {
-        if (c1 == '_' && c2 == '_') error = true;
+        if (c1 == '_' && c2 == '_') {
+          System.out.println("Erreur vous avez pas le droit d'avoir une variable avec 2 __ de suite: \n" + s);
+          System.exit(1);
+        }
       }
       c2 =  c1;
     }
-    if (s.charAt(s.length() - 1) == '_') error = true;
-    if (error) {
-      System.out.println("Erreur : " + s);
+    if (s.charAt(s.length() - 1) == '_'){
+      System.out.println("Erreur vous avez pas le droit d'avoir un _ a la fin du nom de variable: \n" + s);
       System.exit(1);
     }
 
@@ -128,7 +132,7 @@ public class AnalLex {
     Terminal t = null;
     while(lexical.resteTerminal()){
       t = lexical.prochainTerminal();
-      toWrite +=t.chaine + "\n" ;  // toWrite contient le resultat
+      toWrite += t.chaine + "\n" ;  // toWrite contient le resultat
     }				   //    d'analyse lexicale
     System.out.println(toWrite); 	// Ecriture de toWrite sur la console
     Writer w = new Writer(args[1],toWrite); // Ecriture de toWrite dans fichier args[1]

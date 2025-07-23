@@ -1,0 +1,10 @@
+Lecture de l'AST trouve affichage : *
+	-
+		55
+		47
+	/
+		14
+		2
+
+Lecture de l'AST trouve : ((55 - 47) * (14 / 2))
+Evaluation de l'AST trouve : 56
