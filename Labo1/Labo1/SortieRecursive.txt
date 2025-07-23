@@ -1,10 +1,12 @@
-Lecture de l'AST trouve affichage : +
-	25
-	-
+Lecture de l'AST trouve affichage :
++
+	1
+	+
 		*
-			9
+			2
 			3
-		56
+		4
 
-Lecture de l'AST trouve : (25 + ((9 * 3) - 56))
-Evaluation de l'AST trouve : -4
+Lecture de l'AST trouve : (1 + ((2 * 3) + 4))
+Postfix de l'AST trouve : 1 2 3 * 4 + +
+Evaluation de l'AST trouve : 11

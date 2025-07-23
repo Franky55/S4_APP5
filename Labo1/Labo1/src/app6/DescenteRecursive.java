@@ -3,6 +3,7 @@ package app6;
 /** @author Ahmed Khoumsi */
 
 import static app6.AnalLex.OPERATORS_NO_P;
+import static app6.AnalLex.Type;
 
 /** Cette classe effectue l'analyse syntaxique
  */
@@ -93,7 +94,7 @@ private Terminal partieE() {
       partieE(); // parse inside the parentheses
       Terminal closing = readNext(lexical); // consume ')'
       if (!closing.chaine.equals("(")) {
-        ErreurSynt("Expected closing parenthesis.");
+        ErreurSynt("Il manque une fermeture de parenthese");
       }
       return racine;
     } else if (Character.isLetterOrDigit(current.chaine.charAt(0))) {
@@ -105,7 +106,8 @@ private Terminal partieE() {
 
   private Terminal readNext(AnalLex lexical){
     Terminal t = lexical.prochainTerminal();
-    System.out.println(t.chaine + "\n");
+    if(!t.chaine.isEmpty())
+      System.out.println(t.chaine + "\t" + Type(t.chaine) + "\n");
 
     return t;
   }
@@ -127,7 +129,7 @@ private Terminal partieE() {
     char c2 = nextOne.chaine.charAt(0);
 
     if (OPERATORS_NO_P.contains(c) && OPERATORS_NO_P.contains(c2)) {
-      System.out.println("Erreur : " + current.chaine);
+      System.out.println("Erreur de syntaxe, plusieurs operateur on ete mis un apres l'autre: " + current.chaine);
       System.exit(1);
     }
   }
@@ -150,9 +152,9 @@ private Terminal partieE() {
 
     try {
       ElemAST RacineAST = dr.AnalSynt();
-      toWriteLect += "Lecture de l'AST trouve affichage : " + RacineAST.LectAST("") + "\n";
-
+      toWriteLect += "Lecture de l'AST trouve affichage :\n" + RacineAST.LectAST("") + "\n";
       toWriteLect += "Lecture de l'AST trouve : " + RacineAST.LectAST() + "\n";
+      toWriteLect += "Postfix de l'AST trouve : " + RacineAST.ASTPostfix() + "\n";
       System.out.println(toWriteLect);
       toWriteEval += "Evaluation de l'AST trouve : " + RacineAST.EvalAST() + "\n";
       System.out.println(toWriteEval);

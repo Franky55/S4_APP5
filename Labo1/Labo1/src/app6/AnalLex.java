@@ -98,7 +98,7 @@ public class AnalLex {
     }
 
     for (int i = 0; i < s.length(); i++) {
-      c1 = expression.charAt(i);
+      c1 = s.charAt(i);
       if (c2 != null) {
         if (c1 == '_' && c2 == '_') {
           System.out.println("Erreur vous avez pas le droit d'avoir une variable avec 2 __ de suite: \n" + s);
@@ -112,6 +112,32 @@ public class AnalLex {
       System.exit(1);
     }
 
+  }
+
+  public static String Type(String expression) {
+    return switch (expression) {
+      case "+" -> "Addition";
+      case "-" -> "Soustraction";
+      case "*" -> "Multiplication";
+      case "/" -> "Division";
+      case "(" -> "Parenthese ouvrante";
+      case ")" -> "Parenthese fermante";
+      default -> {
+        if (isNumeric(expression)) {
+          yield "Nombre";
+        } else {
+          yield "Identificateur";
+        }
+      }
+    };
+  }
+
+  private static boolean isNumeric(String str) {
+    if (str == null || str.isEmpty()) return false;
+    for (char c : str.toCharArray()) {
+      if (!Character.isDigit(c)) return false;
+    }
+    return true;
   }
 
   
@@ -132,7 +158,7 @@ public class AnalLex {
     Terminal t = null;
     while(lexical.resteTerminal()){
       t = lexical.prochainTerminal();
-      toWrite += t.chaine + "\n" ;  // toWrite contient le resultat
+      toWrite += t.chaine + "\t" + Type(t.chaine) + "\n" ;  // toWrite contient le resultat
     }				   //    d'analyse lexicale
     System.out.println(toWrite); 	// Ecriture de toWrite sur la console
     Writer w = new Writer(args[1],toWrite); // Ecriture de toWrite dans fichier args[1]

@@ -20,7 +20,6 @@ public class NoeudAST extends ElemAST {
 	elemASTLeft = null;
   }
 
- 
   /** Evaluation de noeud d'AST
    */
   public int EvalAST( ) {
@@ -35,7 +34,6 @@ public class NoeudAST extends ElemAST {
 
   }
 
-
   /** Lecture de noeud d'AST
    */
   public String LectAST( ) {
@@ -44,11 +42,15 @@ public class NoeudAST extends ElemAST {
 	  return "(" + left + " " + expression + " " + right + ")";
   }
 
-	public String LectAST(String prefix) {
-		return prefix + expression + "\n" + elemASTLeft.LectAST(prefix + "\t") + elemASTRight.LectAST(prefix + "\t");
-		//return " " + left.LectAST() + " " + terminal.chaine + " " + right.LectAST() + " ";
+	public String ASTPostfix(){
+		String left = (elemASTLeft != null) ? elemASTLeft.ASTPostfix() : "null";
+		String right = (elemASTRight != null) ? elemASTRight.ASTPostfix() : "null";
+		return left + " " + right + " " + expression;
 	}
 
+	public String LectAST(String prefix) {
+		return prefix + expression + "\n" + elemASTLeft.LectAST(prefix + "\t") + elemASTRight.LectAST(prefix + "\t");
+	}
 }
 
 
