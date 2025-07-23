@@ -1,0 +1,7 @@
+2	Nombre
+/	Division
+14	Nombre
+*	Multiplication
+)	Parenthese fermante
+55–47	Identificateur
+(	Parenthese ouvrante

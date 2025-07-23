@@ -1,9 +1,0 @@
-35	Nombre
-/	Division
-W_z	Identificateur
-*	Multiplication
-)	Parenthese fermante
-V_y	Identificateur
-+	Addition
-U_x	Identificateur
-(	Parenthese ouvrante
